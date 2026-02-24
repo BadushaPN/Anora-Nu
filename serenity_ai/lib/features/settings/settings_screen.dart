@@ -78,7 +78,7 @@ class SettingsScreen extends StatelessWidget {
                       const Text('🔮', style: TextStyle(fontSize: 24)),
                       const SizedBox(width: 12),
                       Text(
-                        'Serenity AI',
+                        'Anora Nu',
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                     ],

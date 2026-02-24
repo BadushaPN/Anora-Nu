@@ -1,0 +1,5 @@
+Analyzing serenity_ai...                                        
+
+warning - Unused import: '../../shared/models/chat_message.dart' - lib\core\services\memory_service.dart:4:8 - unused_import
+
+1 issue found. (ran in 2.6s)

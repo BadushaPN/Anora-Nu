@@ -1,12 +1,11 @@
 import 'dart:convert';
 import 'package:uuid/uuid.dart';
 import '../../shared/models/memory.dart';
-import '../../shared/models/chat_message.dart';
 import '../storage/local_storage_service.dart';
 import 'openai_service.dart';
 
 /// Extracts and manages memories from conversations.
-/// This is the brain of Serenity — it learns from every conversation.
+/// This is the brain of Anora Nu — it learns from every conversation.
 class MemoryService {
   /// Extract memories from a conversation exchange.
   /// Called after each AI response to analyze what was said.
