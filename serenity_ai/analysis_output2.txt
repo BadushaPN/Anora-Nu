@@ -1,0 +1,30 @@
+../../runtime/vm/zone.cc: 96: error: Out of memory.
+version=3.10.3 (stable) (Tue Dec 2 01:04:53 2025 -0800) on "windows_x64"
+pid=24936, thread=22324, isolate_group=main(0000028B9DE55300), isolate=(nil)(0000000000000000)
+os=windows, arch=x64, comp=no, sim=no
+isolate_instructions=28ba13f0000, vm_instructions=7ff709dc8080
+fp=dd3cdfa300, sp=dd3cdfa2b8, pc=7ff70a0ada13
+  pc 0x00007ff70a0ada13 fp 0x000000dd3cdfa300 C:\flutter\bin\cache\dart-sdk\bin\dartvm.exe+0x2eda13
+-- End of DumpStackTrace
+../../runtime/vm/zone.cc: 96: error: Out of memory.
+Aborting reentrant request for stack trace.
+
+Oops; flutter has exited unexpectedly: "Exception: analysis server exited with code -1073740791 and output:
+[stdout] {"event":"server.connected","params":{"version":"1.40.0","pid":24936}}
+[stdout] {"id":"1"}
+[stdout] {"event":"analysis.errors","params":{"file":"D:\\Personal\\AI-personal_project\\integrity-ai-com\\serenity_ai\\analysis_options.yaml","errors":[]}}
+[stdout] {"event":"analysis.errors","params":{"file":"D:\\Personal\\AI-personal_project\\integrity-ai-com\\serenity_ai\\android\\app\\src\\debug\\AndroidManifest.xml","errors":[]}}
+[stdout] {"event":"analysis.errors","params":{"file":"D:\\Personal\\AI-personal_project\\integrity-ai-com\\serenity_ai\\android\\app\\src\\main\\AndroidManifest.xml","errors":[]}}
+[stdout] {"event":"analysis.errors","params":{"file":"D:\\Personal\\AI-personal_project\\integrity-ai-com\\serenity_ai\\android\\app\\src\\profile\\AndroidManifest.xml","errors":[]}}
+[stdout] {"event":"analysis.errors","params":{"file":"D:\\Personal\\AI-personal_project\\integrity-ai-com\\serenity_ai\\pubspec.yaml","errors":[]}}
+[stdout] {"event":"server.status","params":{"analysis":{"isAnalyzing":true}}}
+[stderr] ../../runtime/vm/zone.cc: 96: error: Out of memory.
+[stderr] version=3.10.3 (stable) (Tue Dec 2 01:04:53 2025 -0800) on "windows_x64"
+[stderr] pid=24936, thread=22324, isolate_group=main(0000028B9DE55300), isolate=(nil)(0000000000000000)
+[stderr] os=windows, arch=x64, comp=no, sim=no
+[stderr] isolate_instructions=28ba13f0000, vm_instructions=7ff709dc8080
+[stderr] fp=dd3cdfa300, sp=dd3cdfa2b8, pc=7ff70a0ada13
+[stderr]   pc 0x00007ff70a0ada13 fp 0x000000dd3cdfa300 C:\flutter\bin\cache\dart-sdk\bin\dartvm.exe+0x2eda13
+[stderr] -- End of DumpStackTrace
+[stderr] ../../runtime/vm/zone.cc: 96: error: Out of memory.
+[stderr] Aborting reentrant request for stack trace.".

@@ -1,0 +1,28 @@
+name: serenity_ai
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ^3.10.3
+
+dependencies:
+  fl_chart: ^1.1.1
+  flutter:
+    sdk: flutter
+  get: ^4.7.3
+  google_fonts: ^8.0.2
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  http: ^1.6.0
+  intl: ^0.20.2
+  lottie: ^3.3.2
+  uuid: ^4.5.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
