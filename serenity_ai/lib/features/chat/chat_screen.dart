@@ -35,7 +35,7 @@ class ChatScreen extends StatelessWidget {
           () => Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('Serenity'),
+              const Text('Anora Nu'),
               Text(
                 controller.companionAgeLabel,
                 style: TextStyle(

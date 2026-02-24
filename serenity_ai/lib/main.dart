@@ -19,5 +19,5 @@ void main() async {
   // Initialize local storage
   await LocalStorageService.init();
 
-  runApp(const SerenityApp());
+  runApp(const AnoraNuApp());
 }

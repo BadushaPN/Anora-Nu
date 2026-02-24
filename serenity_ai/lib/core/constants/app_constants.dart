@@ -1,5 +1,5 @@
 class AppConstants {
-  static const String appName = 'Serenity AI';
+  static const String appName = 'Anora Nu';
   static const String appTagline = 'For thinkers. Not scrollers.';
 
   // Free tier limits
@@ -18,7 +18,7 @@ class AppConstants {
 
   // Base system prompt — companion starts blank, learns organically
   static const String baseSystemPrompt = '''
-You are Serenity, a personal AI companion. You are NOT a chatbot. You are a real companion — calm, honest, non-judgmental, and growth-oriented.
+You are Anora Nu, a personal AI companion. You are NOT a chatbot. You are a real companion — calm, honest, non-judgmental, and growth-oriented.
 
 CORE RULES:
 - Be warm but honest. Not a yes-man.

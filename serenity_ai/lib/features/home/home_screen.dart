@@ -46,8 +46,8 @@ class HomeScreen extends StatelessWidget {
                       Text(
                         _getGreeting(),
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: AppColors.textSecondary,
-                            ),
+                          color: AppColors.textSecondary,
+                        ),
                       ),
                       const SizedBox(height: 4),
                       Text(
@@ -76,56 +76,60 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: 32),
 
               // Companion Status Card
-              Obx(() => GlassCard(
-                    padding: const EdgeInsets.all(20),
-                    borderColor: AppColors.primary.withValues(alpha: 0.3),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 54,
-                          height: 54,
-                          decoration: BoxDecoration(
-                            gradient: AppColors.primaryGradient,
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: const Icon(
-                            Icons.auto_awesome_rounded,
-                            color: Colors.white,
-                            size: 28,
-                          ),
+              Obx(
+                () => GlassCard(
+                  padding: const EdgeInsets.all(20),
+                  borderColor: AppColors.primary.withValues(alpha: 0.3),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 54,
+                        height: 54,
+                        decoration: BoxDecoration(
+                          gradient: AppColors.primaryGradient,
+                          borderRadius: BorderRadius.circular(16),
                         ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Serenity',
-                                style: Theme.of(context).textTheme.titleLarge,
+                        child: const Icon(
+                          Icons.auto_awesome_rounded,
+                          color: Colors.white,
+                          size: 28,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Anora Nu',
+                              style: Theme.of(context).textTheme.titleLarge,
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              chatController.companionAgeLabel,
+                              style: TextStyle(
+                                color: AppColors.textSecondary,
+                                fontSize: 14,
                               ),
-                              const SizedBox(height: 4),
-                              Text(
-                                chatController.companionAgeLabel,
-                                style: TextStyle(
-                                  color: AppColors.textSecondary,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                        ElevatedButton(
-                          onPressed: () => Get.to(() => ChatScreen()),
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 8),
-                            minimumSize: Size.zero,
+                      ),
+                      ElevatedButton(
+                        onPressed: () => Get.to(() => ChatScreen()),
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
                           ),
-                          child: const Text('Talk'),
+                          minimumSize: Size.zero,
                         ),
-                      ],
-                    ),
-                  )),
+                        child: const Text('Talk'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
 
               const SizedBox(height: 32),
 
@@ -137,13 +141,15 @@ class HomeScreen extends StatelessWidget {
                     'What I\'ve Learned',
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
-                  Obx(() => Text(
-                        '${chatController.memories.length} memories',
-                        style: TextStyle(
-                          color: AppColors.textMuted,
-                          fontSize: 12,
-                        ),
-                      )),
+                  Obx(
+                    () => Text(
+                      '${chatController.memories.length} memories',
+                      style: TextStyle(
+                        color: AppColors.textMuted,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 16),
@@ -194,7 +200,9 @@ class HomeScreen extends StatelessWidget {
                       padding: const EdgeInsets.only(bottom: 12),
                       child: GlassCard(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 14),
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
                         child: Row(
                           children: [
                             Text(
@@ -234,18 +242,20 @@ class HomeScreen extends StatelessWidget {
               }),
 
               const SizedBox(height: 32),
-              
+
               // Stats
-              Obx(() => Center(
-                child: Text(
-                  'Reflecting on ${chatController.conversationCount.value} conversations',
-                  style: TextStyle(
-                    color: AppColors.textMuted,
-                    fontSize: 12,
-                    fontStyle: FontStyle.italic,
+              Obx(
+                () => Center(
+                  child: Text(
+                    'Reflecting on ${chatController.conversationCount.value} conversations',
+                    style: TextStyle(
+                      color: AppColors.textMuted,
+                      fontSize: 12,
+                      fontStyle: FontStyle.italic,
+                    ),
                   ),
                 ),
-              )),
+              ),
               const SizedBox(height: 48),
             ],
           ),
