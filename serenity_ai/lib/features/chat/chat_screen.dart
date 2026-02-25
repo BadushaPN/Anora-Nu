@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../../core/theme/app_theme.dart';
 import 'chat_controller.dart';
 import 'widgets/message_bubble.dart';
+import 'widgets/voice_view.dart';
 
 class ChatScreen extends StatelessWidget {
   ChatScreen({super.key});
@@ -27,12 +28,23 @@ class ChatScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.find<ChatController>();
 
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
+    return Obx(() {
+      if (controller.isVoiceMode.value) {
+        return Scaffold(
+          backgroundColor: AppColors.background,
+          body: const SafeArea(child: VoiceView()),
+        );
+      }
+
+      return Scaffold(
         backgroundColor: AppColors.background,
-        title: Obx(
-          () => Column(
+        appBar: AppBar(
+          backgroundColor: AppColors.background,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new_rounded),
+            onPressed: () => Get.back(),
+          ),
+          title: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               const Text('Anora Nu'),
@@ -46,98 +58,109 @@ class ChatScreen extends StatelessWidget {
               ),
             ],
           ),
-        ),
-        centerTitle: true,
-        actions: [
-          Obx(
-            () => Padding(
-              padding: const EdgeInsets.only(right: 16),
-              child: Center(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: controller.remainingMessages > 5
-                        ? AppColors.primary.withValues(alpha: 0.2)
-                        : AppColors.accent.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    '${controller.remainingMessages} left',
-                    style: TextStyle(
-                      color: controller.remainingMessages > 5
-                          ? AppColors.primary
-                          : AppColors.accent,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
+          centerTitle: true,
+          actions: [
+            IconButton(
+              onPressed: () => controller.isVoiceMode.value = true,
+              icon: const Icon(
+                Icons.mic_none_rounded,
+                color: AppColors.primary,
               ),
+              tooltip: 'Voice Mode',
+            ),
+            _buildRemainingMessagesIndicator(controller),
+          ],
+        ),
+        body: Column(
+          children: [
+            // Memory indicator
+            _buildMemoryIndicator(controller),
+            // Messages
+            Expanded(
+              child: Obx(() {
+                _scrollToBottom();
+                if (controller.messages.isEmpty) {
+                  return _buildEmptyState(context, controller);
+                }
+
+                return ListView.builder(
+                  controller: _scrollController,
+                  padding: const EdgeInsets.only(bottom: 8),
+                  itemCount:
+                      controller.messages.length +
+                      (controller.isLoading.value ? 1 : 0),
+                  itemBuilder: (context, index) {
+                    if (index == controller.messages.length) {
+                      return _buildTypingIndicator();
+                    }
+
+                    final msg = controller.messages[index];
+                    return MessageBubble(
+                      message: msg.content,
+                      isUser: msg.isUser,
+                      time: DateFormat.jm().format(msg.timestamp),
+                    );
+                  },
+                );
+              }),
+            ),
+            // Input bar
+            _buildInputBar(controller),
+          ],
+        ),
+      );
+    });
+  }
+
+  Widget _buildRemainingMessagesIndicator(ChatController controller) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: Center(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          decoration: BoxDecoration(
+            color: controller.remainingMessages > 5
+                ? AppColors.primary.withValues(alpha: 0.2)
+                : AppColors.accent.withValues(alpha: 0.2),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Text(
+            '${controller.remainingMessages} left',
+            style: TextStyle(
+              color: controller.remainingMessages > 5
+                  ? AppColors.primary
+                  : AppColors.accent,
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
             ),
           ),
-        ],
-      ),
-      body: Column(
-        children: [
-          // Memory indicator — subtle pulse when companion has memories
-          Obx(() {
-            if (controller.memories.isEmpty) return const SizedBox.shrink();
-            return Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.psychology_rounded,
-                    size: 14,
-                    color: AppColors.primary.withValues(alpha: 0.6),
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    '${controller.memories.length} memories learned',
-                    style: TextStyle(color: AppColors.textMuted, fontSize: 11),
-                  ),
-                ],
-              ),
-            );
-          }),
-          // Messages
-          Expanded(
-            child: Obx(() {
-              _scrollToBottom();
-              if (controller.messages.isEmpty) {
-                return _buildEmptyState(context, controller);
-              }
-
-              return ListView.builder(
-                controller: _scrollController,
-                padding: const EdgeInsets.only(bottom: 8),
-                itemCount:
-                    controller.messages.length +
-                    (controller.isLoading.value ? 1 : 0),
-                itemBuilder: (context, index) {
-                  if (index == controller.messages.length) {
-                    return _buildTypingIndicator();
-                  }
-
-                  final msg = controller.messages[index];
-                  return MessageBubble(
-                    message: msg.content,
-                    isUser: msg.isUser,
-                    time: DateFormat.jm().format(msg.timestamp),
-                  );
-                },
-              );
-            }),
-          ),
-          // Input bar
-          _buildInputBar(controller),
-        ],
+        ),
       ),
     );
+  }
+
+  Widget _buildMemoryIndicator(ChatController controller) {
+    return Obx(() {
+      if (controller.memories.isEmpty) return const SizedBox.shrink();
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.psychology_rounded,
+              size: 14,
+              color: AppColors.primary.withValues(alpha: 0.6),
+            ),
+            const SizedBox(width: 6),
+            Text(
+              '${controller.memories.length} memories learned',
+              style: TextStyle(color: AppColors.textMuted, fontSize: 11),
+            ),
+          ],
+        ),
+      );
+    });
   }
 
   Widget _buildEmptyState(BuildContext context, ChatController controller) {

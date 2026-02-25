@@ -82,6 +82,8 @@ class ChatService {
       final msg = e.toString();
       if (msg.contains('INVALID_API_KEY')) {
         return '🔑 Invalid API key. Please check your OpenAI API key in Settings.';
+      } else if (msg.contains('INSUFFICIENT_QUOTA')) {
+        return '💳 Insufficient balance. Please add credits to your OpenAI account at platform.openai.com.';
       } else if (msg.contains('RATE_LIMIT')) {
         return '⏳ Too many requests. Please wait a moment and try again.';
       } else {

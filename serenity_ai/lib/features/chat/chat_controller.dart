@@ -1,5 +1,8 @@
 import 'package:get/get.dart';
 import 'package:uuid/uuid.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
+import 'package:flutter_tts/flutter_tts.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/storage/local_storage_service.dart';
 import '../../core/services/memory_service.dart';
@@ -14,13 +17,83 @@ class ChatController extends GetxController {
   final memories = <Memory>[].obs;
   final conversationCount = 0.obs;
 
+  // Voice related
+  final stt.SpeechToText _speech = stt.SpeechToText();
+  final FlutterTts _tts = FlutterTts();
+
+  final isListening = false.obs;
+  final lastWords = ''.obs;
+  final isSpeechAvailable = false.obs;
+  final isSpeaking = false.obs;
+  final isVoiceMode = true.obs;
+
   @override
   void onInit() {
     super.onInit();
     _loadMessages();
     _loadMemories();
+    _initVoice();
     todayMessageCount.value = LocalStorageService.getTodayMessageCount();
     conversationCount.value = LocalStorageService.getConversationCount();
+  }
+
+  Future<void> _initVoice() async {
+    try {
+      isSpeechAvailable.value = await _speech.initialize(
+        onStatus: (status) {
+          if (status == 'done' || status == 'notListening') {
+            isListening.value = false;
+          }
+        },
+        onError: (error) {
+          isListening.value = false;
+        },
+      );
+
+      await _tts.setLanguage("en-US");
+      await _tts.setPitch(1.0);
+      await _tts.setSpeechRate(0.5);
+
+      _tts.setStartHandler(() => isSpeaking.value = true);
+      _tts.setCompletionHandler(() => isSpeaking.value = false);
+      _tts.setErrorHandler((msg) => isSpeaking.value = false);
+    } catch (e) {
+      isSpeechAvailable.value = false;
+    }
+  }
+
+  Future<void> startListening() async {
+    final status = await Permission.microphone.request();
+    if (status.isGranted) {
+      if (isSpeechAvailable.value) {
+        lastWords.value = '';
+        isListening.value = true;
+        await _speech.listen(
+          onResult: (result) {
+            lastWords.value = result.recognizedWords;
+            if (result.finalResult) {
+              isListening.value = false;
+              sendMessage(result.recognizedWords, fromVoice: true);
+            }
+          },
+        );
+      }
+    }
+  }
+
+  Future<void> stopListening() async {
+    await _speech.stop();
+    isListening.value = false;
+  }
+
+  Future<void> speak(String text) async {
+    if (text.isEmpty) return;
+    await _tts.speak(text);
+  }
+
+  Future<void> stopSpeaking() async {
+    await _tts.stop();
+    isSpeaking.value = false;
   }
 
   void _loadMessages() {
@@ -48,7 +121,7 @@ class ChatController extends GetxController {
     return '✨ Ancient';
   }
 
-  Future<void> sendMessage(String text) async {
+  Future<void> sendMessage(String text, {bool fromVoice = false}) async {
     if (text.trim().isEmpty) return;
     if (!canSend) return;
 
@@ -90,6 +163,9 @@ class ChatController extends GetxController {
     conversationCount.value = LocalStorageService.getConversationCount();
 
     isLoading.value = false;
+
+    // Speak response
+    speak(response);
 
     // Extract memories in background (don't block the UI)
     _extractMemoriesInBackground(text.trim(), response);

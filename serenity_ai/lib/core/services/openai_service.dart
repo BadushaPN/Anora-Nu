@@ -42,12 +42,20 @@ class OpenAIService {
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       return data['choices'][0]['message']['content'].toString().trim();
-    } else if (response.statusCode == 401) {
-      throw Exception('INVALID_API_KEY');
-    } else if (response.statusCode == 429) {
-      throw Exception('RATE_LIMIT');
     } else {
-      throw Exception('API_ERROR_${response.statusCode}');
+      final errorData = jsonDecode(response.body);
+      final errorCode = errorData['error']?['code'];
+
+      if (response.statusCode == 401) {
+        throw Exception('INVALID_API_KEY');
+      } else if (response.statusCode == 429) {
+        if (errorCode == 'insufficient_quota') {
+          throw Exception('INSUFFICIENT_QUOTA');
+        }
+        throw Exception('RATE_LIMIT');
+      } else {
+        throw Exception('API_ERROR_${response.statusCode}');
+      }
     }
   }
 }
