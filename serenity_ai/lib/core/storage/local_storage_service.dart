@@ -100,6 +100,14 @@ class LocalStorageService {
     return _settingsBox.get('openai_api_key');
   }
 
+  // ── Permissions ───────────────────────────────────────
+  static bool get hasPromptedForMic =>
+      _settingsBox.get('has_prompted_for_mic', defaultValue: false);
+
+  static Future<void> markMicPrompted() async {
+    await _settingsBox.put('has_prompted_for_mic', true);
+  }
+
   // ── Full Reset ────────────────────────────────────────
   static Future<void> clearAll() async {
     await _userBox.clear();

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:uuid/uuid.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
@@ -35,6 +36,42 @@ class ChatController extends GetxController {
     _initVoice();
     todayMessageCount.value = LocalStorageService.getTodayMessageCount();
     conversationCount.value = LocalStorageService.getConversationCount();
+
+    // Check for microphone permission on first launch
+    if (!LocalStorageService.hasPromptedForMic) {
+      _checkMicrophonePermission();
+    }
+  }
+
+  Future<void> _checkMicrophonePermission() async {
+    final status = await Permission.microphone.status;
+    if (status.isDenied) {
+      // Re-request
+      final result = await Permission.microphone.request();
+      if (result.isDenied || result.isPermanentlyDenied) {
+        _handleMicDenial(result.isPermanentlyDenied);
+      }
+      await LocalStorageService.markMicPrompted();
+    } else if (status.isGranted) {
+      await LocalStorageService.markMicPrompted();
+    }
+  }
+
+  void _handleMicDenial(bool permanentlyDenied) {
+    Get.snackbar(
+      'Microphone Access Required',
+      permanentlyDenied
+          ? 'Microphone access is permanently denied. Please enable it in settings to use voice features.'
+          : 'Microphone access is needed for voice mode. You can still use text chat.',
+      snackPosition: SnackPosition.BOTTOM,
+      duration: const Duration(seconds: 5),
+      mainButton: permanentlyDenied
+          ? TextButton(
+              onPressed: () => openAppSettings(),
+              child: const Text('Settings'),
+            )
+          : null,
+    );
   }
 
   Future<void> _initVoice() async {
