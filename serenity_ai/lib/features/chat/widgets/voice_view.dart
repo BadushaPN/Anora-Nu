@@ -24,7 +24,10 @@ class VoiceView extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   IconButton(
-                    onPressed: () => Get.toNamed('/main'),
+                    onPressed: () {
+                      controller.stopSpeaking();
+                      Get.toNamed('/main');
+                    },
                     icon: const Icon(Icons.dashboard_outlined),
                     color: AppColors.textSecondary,
                     tooltip: 'Dashboard',
@@ -128,7 +131,10 @@ class VoiceView extends StatelessWidget {
 
                   // Switch to Chat Button
                   TextButton.icon(
-                    onPressed: () => controller.isVoiceMode.value = false,
+                    onPressed: () {
+                      controller.stopSpeaking();
+                      controller.isVoiceMode.value = false;
+                    },
                     icon: const Icon(
                       Icons.chat_bubble_outline_rounded,
                       size: 20,

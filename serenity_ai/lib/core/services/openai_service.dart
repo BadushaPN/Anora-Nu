@@ -14,47 +14,83 @@ class OpenAIService {
     double temperature = 0.7,
     int maxTokens = 500,
   }) async {
-    final messages = <Map<String, String>>[
-      {'role': 'system', 'content': systemPrompt},
-    ];
+    final contents = <Map<String, dynamic>>[];
 
     // Add conversation history if provided
     if (history != null) {
-      messages.addAll(history);
+      for (final msg in history) {
+        final role = msg['role'] == 'user' ? 'user' : 'model';
+        contents.add({
+          'role': role,
+          'parts': [{'text': msg['content']}]
+        });
+      }
     }
 
-    messages.add({'role': 'user', 'content': userMessage});
+    contents.add({
+      'role': 'user',
+      'parts': [{'text': userMessage}]
+    });
+
+    final url = 'https://generativelanguage.googleapis.com/v1beta/models/${AppConstants.defaultModel}:generateContent?key=$apiKey';
 
     final response = await http.post(
-      Uri.parse(AppConstants.openAiBaseUrl),
+      Uri.parse(url),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $apiKey',
       },
       body: jsonEncode({
-        'model': AppConstants.defaultModel,
-        'messages': messages,
-        'temperature': temperature,
-        'max_tokens': maxTokens,
+        'system_instruction': {
+          'parts': {'text': systemPrompt}
+        },
+        'contents': contents,
+        'generationConfig': {
+          'temperature': temperature,
+          'maxOutputTokens': maxTokens,
+        }
       }),
     );
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      return data['choices'][0]['message']['content'].toString().trim();
+      final candidates = data['candidates'] as List?;
+      if (candidates != null && candidates.isNotEmpty) {
+        final parts = candidates[0]['content']?['parts'] as List?;
+        if (parts != null && parts.isNotEmpty) {
+          return parts[0]['text'].toString().trim();
+        }
+      }
+      return '';
     } else {
-      final errorData = jsonDecode(response.body);
-      final errorCode = errorData['error']?['code'];
+      dynamic errorData;
+      try {
+        errorData = jsonDecode(response.body);
+        if (errorData is List && errorData.isNotEmpty) {
+          errorData = errorData.first;
+        }
+      } catch (e) {
+        // Ignored
+      }
+      
+      dynamic errorMessage;
+      dynamic errorCode;
+      if (errorData is Map) {
+        final err = errorData['error'];
+        if (err is Map) {
+          errorCode = err['code'];
+          errorMessage = err['message'];
+        }
+      }
 
-      if (response.statusCode == 401) {
-        throw Exception('INVALID_API_KEY');
+      if (response.statusCode == 401 || response.statusCode == 403) {
+        throw Exception(errorMessage ?? 'INVALID_API_KEY');
       } else if (response.statusCode == 429) {
         if (errorCode == 'insufficient_quota') {
           throw Exception('INSUFFICIENT_QUOTA');
         }
         throw Exception('RATE_LIMIT');
       } else {
-        throw Exception('API_ERROR_${response.statusCode}');
+        throw Exception(errorMessage ?? 'API_ERROR_${response.statusCode}');
       }
     }
   }

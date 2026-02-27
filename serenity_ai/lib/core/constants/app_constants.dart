@@ -8,7 +8,7 @@ class AppConstants {
   // OpenAI
   static const String openAiBaseUrl =
       'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions';
-  static const String defaultModel = 'gemini-1.5-flash';
+  static const String defaultModel = 'gemini-2.5-flash';
 
   // Hive box names
   static const String userBox = 'user_box';

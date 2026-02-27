@@ -97,8 +97,7 @@ class LocalStorageService {
   }
 
   static String? getApiKey() {
-    return _settingsBox.get('openai_api_key') ??
-        'AIzaSyDTaJb8t7l7AseTIqkSpX6KCaRg99g3lwk';
+    return _settingsBox.get('openai_api_key');
   }
 
   // ── Permissions ───────────────────────────────────────

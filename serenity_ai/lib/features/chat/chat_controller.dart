@@ -89,10 +89,16 @@ class ChatController extends GetxController {
 
       await _tts.setLanguage("en-US");
       await _tts.setPitch(1.0);
+      await _tts.setVolume(1.0);
       await _tts.setSpeechRate(0.5);
 
       _tts.setStartHandler(() => isSpeaking.value = true);
-      _tts.setCompletionHandler(() => isSpeaking.value = false);
+      _tts.setCompletionHandler(() {
+        isSpeaking.value = false;
+        if (isVoiceMode.value) {
+          startListening();
+        }
+      });
       _tts.setErrorHandler((msg) => isSpeaking.value = false);
     } catch (e) {
       isSpeechAvailable.value = false;
@@ -200,9 +206,12 @@ class ChatController extends GetxController {
     conversationCount.value = LocalStorageService.getConversationCount();
 
     isLoading.value = false;
+    lastWords.value = '';
 
-    // Speak response
-    speak(response);
+    // Speak response if in voice mode
+    if (isVoiceMode.value) {
+      speak(response);
+    }
 
     // Extract memories in background (don't block the UI)
     _extractMemoriesInBackground(text.trim(), response);

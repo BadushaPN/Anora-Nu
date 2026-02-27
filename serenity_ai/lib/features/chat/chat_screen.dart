@@ -42,7 +42,10 @@ class ChatScreen extends StatelessWidget {
           backgroundColor: AppColors.background,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios_new_rounded),
-            onPressed: () => Get.back(),
+            onPressed: () {
+              controller.stopSpeaking();
+              Get.back();
+            },
           ),
           title: Column(
             mainAxisSize: MainAxisSize.min,

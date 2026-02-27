@@ -87,10 +87,11 @@ class ChatService {
       } else if (msg.contains('RATE_LIMIT')) {
         return '⏳ Too many requests. Please wait a moment and try again.';
       } else {
-        return '😔 Something went wrong. Please try again.';
+        return '😔 Something went wrong. Details: $msg';
       }
     } catch (e) {
-      return '📡 Connection error. Please check your internet and try again.';
+      print('ChatService Error: $e');
+      return '📡 Connection error. Details: $e';
     }
   }
 }
