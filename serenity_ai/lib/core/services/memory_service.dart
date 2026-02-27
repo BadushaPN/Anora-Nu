@@ -60,7 +60,17 @@ JSON array only, no other text:''';
       );
 
       // Parse the JSON response
-      final cleaned = response.trim();
+      var cleaned = response.trim();
+      if (cleaned.startsWith('```json')) {
+        cleaned = cleaned.substring(7);
+      } else if (cleaned.startsWith('```')) {
+        cleaned = cleaned.substring(3);
+      }
+      if (cleaned.endsWith('```')) {
+        cleaned = cleaned.substring(0, cleaned.length - 3);
+      }
+      cleaned = cleaned.trim();
+      
       final List<dynamic> parsed = jsonDecode(cleaned);
 
       final uuid = const Uuid();
